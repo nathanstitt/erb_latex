@@ -1,0 +1,16 @@
+\documentclass[oneside,12pt]{memoir}
+\usepackage{xltxtra}
+\usepackage{lastpage}
+\usepackage[T1]{fontenc}
+\makepagestyle{plain}
+\makeoddfoot{plain}{}{}{Page \thepage\ of \pageref{LastPage}}
+\makeevenfoot{plain}{}{}{Page \thepage\ of \pageref{LastPage}}
+\begin{document}
+\pagestyle{plain}
+Page 1
+\newpage
+Page 2
+\newpage
+Page 3
+\newpage
+\end{document}
