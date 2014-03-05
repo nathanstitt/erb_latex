@@ -10,19 +10,23 @@ Also supplies a Guard task to watch for modifications and auto-building files.
 
 [Argosity](http://argosity.com/) uses this for several different projects
 
- * [Nathan](http://nathan.stitt.org/) originally used a bare-bones of this to generate his resume.
+ * I originally used a bare-bones & hacky version to generate my resume in both HTML & PDF
  * [Stockor](http://stockor.org/), our open-source ERP platform.  It's used for building all the form that output as PDF.
- * Generating proposals for client projects.
+ * Generating proposals for client projects.  Hit me up with a consulting request and you'll probably receive one!
 
-## Api Docs
+## Links
 
-Are hosted at [nathan.stitt.org/code/erb-latex/](http://nathan.stitt.org/code/erb-latex/)
+API docs are hosted at [nathan.stitt.org/code/erb-latex/](http://nathan.stitt.org/code/erb-latex/)
+
+The source is on github at [github.com/nathanstitt/erb_latex](https://github.com/nathanstitt/erb_latex)
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
     gem 'erb_latex'
+
+You'll also need a working tex installation, in particular the xelatex binary. You can get that from [TeX Live](https://www.tug.org/texlive/).
 
 And then execute:
 
@@ -64,10 +68,10 @@ and a simple LaTeX body: ``body.tex``
 \lettrine[lines=2]{T}{hank} you for your your consideration.
 Please let us know if we can help you any further at all and don't forget to fill out the speakers notes.
 
-<%=q message %>
+<%=q @message %>
 
 Thank you,
-<%=q author %>
+<%=q @author %>
 ```
 The following will convert it to a pdf
 
