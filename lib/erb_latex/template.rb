@@ -25,7 +25,11 @@ module ErbLatex
         attr_reader   :log,    :pass_count
         # @attribute [rw] layout
         #   @return [String] path to a file to use for layout
-        attr_accessor :layout
+        # @attribute [rw] packages_path
+        #   @return [String] path to a directory to search for packages
+        # @attribute [rw] partials_path
+        #   @return [String] path to a directory to search for partials to include
+        attr_accessor :layout, :packages_path, :partials_path
 
         # create a new Template
         # @param view_file [String] path to the latex template
@@ -34,6 +38,8 @@ module ErbLatex
         def initialize( view_file, options={} )
             @data   = options[:data] || {}
             @layout = options[:layout]
+            @packages_path = options[:packages_path]
+            @partials_path = options[:partials_path]
             @view   = Pathname.new( view_file )
             @log  = ''
         end
@@ -62,7 +68,7 @@ module ErbLatex
                     FileUtils.mv contents, file
                 else
                     file.write contents.read
-                    pdf.rewind
+                    file.rewind
                 end
             end
             file
@@ -70,7 +76,7 @@ module ErbLatex
 
         # @return [StringIO] containing the the PDF
         def to_stringio
-            to_file( ::ErbLatex::StringIO.new(suggested_filename) ).rewind
+            to_file( ::ErbLatex::StringIO.new(suggested_filename) )
         end
 
         # Compile the Latex template into a PDF file
@@ -91,6 +97,7 @@ module ErbLatex
                     yield pdf_file
                 else
                     errors = @log.scan(/\*\!\s(.*?)\n\s*\n/m).map{|e| e.first.gsub(/\n/,'') }.join("; ")
+                    STDERR.puts @log
                     raise LatexError.new( errors.empty? ? "xelatex compile error" : errors, @log )
                 end
             end
@@ -106,7 +113,7 @@ module ErbLatex
         # @raise [LatexError] if the xelatex process does not complete successfully
         def compile_latex
             begin
-                context = ErbLatex::Context.new( @view.dirname, @data )
+                context = ErbLatex::Context.new( @partials_path || @view.dirname, @data )
                 content = ERB.new( @view.read, 0, '-' ).result( context.getBinding )
                 if layout
                     ERB.new( layout_file.read, nil, '-' ).result( context.getBinding{
@@ -133,6 +140,10 @@ module ErbLatex
         def execute_xelatex( latex, dir )
             success = false
             @log    = ''
+
+            if @packages_path
+                ENV['TEXINPUTS'] = "#{@packages_path}:"
+            end
             Open3.popen2e( ErbLatex.xelatex_binary,
               "--no-shell-escape", "-shell-restricted",
               "-jobname=output",   "-output-directory=#{dir}",
