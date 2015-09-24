@@ -79,10 +79,12 @@ The following will convert it to a pdf
 require "erb_latex"
 
 tmpl = ErbLatex::Template.new( 'body.tex', {
-    :layout=>'layout.tex',
-    :data=>{
-        :author=>"Nathan",
-        :messge = "Please call our department at 555-5555"
+    layout: 'layout.tex',
+    partial_path: '/my/partials/directory',
+    packages_path: '/location/of/custom/latex/packages',
+    data: {
+        author: "Nathan",
+        messge: "Please call our department at 555-5555"
     }
 })
 tmpl.to_file('thank-you.pdf')
