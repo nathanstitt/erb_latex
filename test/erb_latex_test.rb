@@ -42,4 +42,11 @@ class ErbLatexTest < MiniTest::Test
         assert_match "a test ’ of a partial", text_output
     end
 
+    def test_path_with_extension
+        tmpl = ErbLatex::Template.new( document('with_partial.tex.erb') )
+        tmpl.to_file tmp_output_file
+        assert_match "a test ’ of a partial", text_output
+    end
+
+
 end
