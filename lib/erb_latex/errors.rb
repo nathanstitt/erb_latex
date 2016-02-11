@@ -7,7 +7,7 @@ module ErbLatex
         #   @return the log from the xelatex run
         attr_reader :log
 
-        def initialize( msg, log )
+        def initialize( msg, log = '')
             super(msg)
             @log = log
         end

@@ -97,7 +97,7 @@ module ErbLatex
                     yield pdf_file
                 else
                     errors = @log.scan(/\*\!\s(.*?)\n\s*\n/m).map{|e| e.first.gsub(/\n/,'') }.join("; ")
-                    STDERR.puts @log
+                    STDERR.puts @log, errors if ErbLatex.config.verbose_logs
                     raise LatexError.new( errors.empty? ? "xelatex compile error" : errors, @log )
                 end
             end
@@ -114,11 +114,9 @@ module ErbLatex
         def compile_latex
             begin
                 context = ErbLatex::Context.new( @partials_path || @view.dirname, @data )
-                content = ERB.new( @view.read, 0, '-' ).result( context.getBinding )
+                content = ErbLatex::File.evaluate(@view, context.getBinding)
                 if layout
-                    ERB.new( layout_file.read, nil, '-' ).result( context.getBinding{
-                        content
-                    })
+                    ErbLatex::File.evaluate(layout_file, context.getBinding{ content })
                 else
                     content
                 end
@@ -144,7 +142,7 @@ module ErbLatex
             if @packages_path
                 ENV['TEXINPUTS'] = "#{@packages_path}:"
             end
-            Open3.popen2e( ErbLatex.xelatex_binary,
+            Open3.popen2e( ErbLatex.config.xelatex_path,
               "--no-shell-escape", "-shell-restricted",
               "-jobname=output",   "-output-directory=#{dir}",
             ) do |stdin, output, wait_thr|

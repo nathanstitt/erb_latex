@@ -30,13 +30,8 @@ module ErbLatex
 
         # include another latex file into the current template
         def partial( template, data={} )
-            view_file = @directory.join( template )
-            if view_file.exist?
-                context = Context.new( @directory, data )
-                ERB.new( view_file.read, 0, '-' ).result(  context.getBinding )
-            else
-                "missing partial: #{template}"
-            end
+            context = Context.new( @directory, data )
+            ErbLatex::File.evaluate(Pathname.new(template), context.getBinding, @directory)
         end
 
         # convert newline characters into latex '\\newline'
