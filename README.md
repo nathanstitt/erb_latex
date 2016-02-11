@@ -1,8 +1,8 @@
 # ERB LaTeX
 
-Applies ERB template processing to a LaTeX file and compiles it to a PDF.
+Applies ERB template processing to a LaTeX file and compiles it to a PDF using xelatex.
 
-Supports layouts, partials, and string escaping.
+Supports layouts, partials, string escaping and packages installed in custom directories.
 
 Also supplies a Guard task to watch for modifications and auto-building files.
 
@@ -11,14 +11,12 @@ Also supplies a Guard task to watch for modifications and auto-building files.
 [Argosity](http://argosity.com/) uses this for several different projects
 
  * I originally used a bare-bones & hacky version to generate my resume in both HTML & PDF
- * [Stockor](http://stockor.org/), our open-source ERP platform.  It's used for building all the form that output as PDF.
+ * [Stockor](http://stockor.org/), my open-source ERP platform.  It's used for building all the form that output as PDF.
  * Generating proposals for client projects.  Hit me up with a consulting request and you'll probably receive one!
 
 ## Links
 
-API docs are hosted at [nathan.stitt.org/code/erb-latex/](http://nathan.stitt.org/code/erb-latex/)
-
-The source is on github at [github.com/nathanstitt/erb_latex](https://github.com/nathanstitt/erb_latex)
+[API docs](http://www.rubydoc.info/gems/erb_latex),  Source on github at [github.com/nathanstitt/erb_latex](https://github.com/nathanstitt/erb_latex)
 
 ## Installation
 
@@ -35,6 +33,16 @@ And then execute:
 Or install it yourself as:
 
     $ gem install erb_latex
+
+## Configuration
+
+```ruby
+ErbLatex.configure do | config |
+  config.file_extesion = '.tex' # defaults to .tex.erb
+  config.verbose_logs = true    # will output failure diagnostics to STDERR when enabled
+  config.xelatex_path = '/opt/texlive/bin/xelatex' # for cases where xelatex is not located in PATH
+end
+```
 
 ## Usage
 
@@ -66,9 +74,11 @@ and a simple LaTeX body: ``body.tex``
 
 ```latex
 \lettrine[lines=2]{T}{hank} you for your your consideration.
-Please let us know if we can help you any further at all and don't forget to fill out the speakers notes.
+Please let us know if we can help you!
 
 <%=q @message %>
+
+So long and thanks for all the fish.
 
 Thank you,
 <%=q @author %>
@@ -106,12 +116,13 @@ guard :erb_latex do
 end
 ```
 
-While the one below would compile the hypothetical body.tex file above
+While the one below would compile the hypothetical body.tex file above.
 
 ```ruby
 require 'erb_latex/guard'
 
-guard :erb_latex, :layout=>'proposal.tex', :data=>{:author=>'Nathan Stitt', :message=>'Buy low, Sell High!'} do
+data = {:author=>'Nathan Stitt', :message=>'Buy low, Sell High!'}
+guard :erb_latex, :layout=>'proposal.tex', :data => data do
     watch 'body.tex'
 end
 ```
