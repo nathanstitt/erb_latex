@@ -38,7 +38,7 @@ Or install it yourself as:
 
 ```ruby
 ErbLatex.configure do | config |
-  config.file_extesion = '.tex' # defaults to .tex.erb
+  config.file_extension = '.tex' # defaults to .tex.erb
   config.verbose_logs = true    # will output failure diagnostics to STDERR when enabled
   config.xelatex_path = '/opt/texlive/bin/xelatex' # for cases where xelatex is not located in PATH
 end
@@ -54,9 +54,6 @@ Given a LaTeX layout template: ``layout.tex``
 \usepackage{lettrine}
 \makeatletter
 \AddEverypageHook{
-  \SetBgContents{
-    \includegraphics[width=\paperwidth]{argosity-background-wave.png}
-  }
   \SetBgPosition{current page.south}
   \SetBgAnchor{above}
   \SetBgAngle{0}
@@ -94,7 +91,7 @@ tmpl = ErbLatex::Template.new( 'body.tex', {
     packages_path: '/location/of/custom/latex/packages',
     data: {
         author: "Nathan",
-        messge: "Please call our department at 555-5555"
+        message: "Please call our department at 555-5555"
     }
 })
 tmpl.to_file('thank-you.pdf')
