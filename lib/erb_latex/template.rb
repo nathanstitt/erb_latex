@@ -34,10 +34,13 @@ module ErbLatex
         # create a new Template
         # @param view_file [String] path to the latex template
         # @option options [String] :layout path to a latex template that calls yield
-        # @option options [Hash] :data an instance variable will be created in the view for each key/value pair
+        # @option options [Hash]   :data an instance variable will be created in the view for each key/value pair
+        # @option context [Class]  : a class that will be instantiated to provide helper methods to ERB templates.  Defaults to ErbLatex:Context
+
         def initialize( view_file, options={} )
             @data   = options[:data] || {}
             @layout = options[:layout]
+            @context = options[:context] || ErbLatex::Context
             @packages_path = options[:packages_path]
             @partials_path = options[:partials_path]
             @view   = Pathname.new( view_file )
@@ -113,14 +116,14 @@ module ErbLatex
         # @raise [LatexError] if the xelatex process does not complete successfully
         def compile_latex
             begin
-                context = ErbLatex::Context.new( @partials_path || @view.dirname, @data )
+                context = @context.new( @partials_path || @view.dirname, @data )
                 content = ErbLatex::File.evaluate(@view, context.getBinding)
                 if layout
                     ErbLatex::File.evaluate(layout_file, context.getBinding{ content })
                 else
                     content
                 end
-            rescue RuntimeError,LocalJumpError=>e
+            rescue LocalJumpError=>e
                 raise LatexError.new( "ERB compile raised #{e.class} on #{@view}", e.backtrace )
             end
         end

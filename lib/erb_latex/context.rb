@@ -30,7 +30,7 @@ module ErbLatex
 
         # include another latex file into the current template
         def partial( template, data={} )
-            context = Context.new( @directory, data )
+            context = self.class.new( @directory, data )
             ErbLatex::File.evaluate(Pathname.new(template), context.getBinding, @directory)
         end
 

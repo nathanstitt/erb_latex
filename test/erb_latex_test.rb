@@ -48,5 +48,12 @@ class ErbLatexTest < MiniTest::Test
         assert_match "a test ’ of a partial", text_output
     end
 
-
+    def test_custom_context
+        tmpl = ErbLatex::Template.new(
+            document('custom_context.tex.erb'),
+            context: CustomContext
+        )
+        tmpl.to_file tmp_output_file
+        assert_match "custom helper method", text_output
+    end
 end

@@ -9,6 +9,12 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'erb_latex'
 
+class CustomContext < ErbLatex::Context
+    def output_test_string
+        'A string from custom helper method'
+    end
+end
+
 class MiniTest::Test
 
     def document( name )
