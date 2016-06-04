@@ -27,7 +27,10 @@ class ErbLatexTest < MiniTest::Test
     end
 
     def test_multiple_runs
-        tmpl = ErbLatex::Template.new( document(:multi_page) )
+        tmpl = ErbLatex::Template.new(
+            document(:multi_page),
+            packages_path: Pathname.new(__FILE__).dirname.join('fixtures')
+        )
         tmpl.to_file tmp_output_file
         assert_equal 2, tmpl.pass_count
         text = text_output
