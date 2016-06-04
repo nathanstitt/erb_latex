@@ -34,9 +34,9 @@ module ErbLatex
             ErbLatex::File.evaluate(Pathname.new(template), context.getBinding, @directory)
         end
 
-        # convert newline characters into latex '\\newline'
+        # convert newline characters into latex '\\linebreak'
         def break_lines( txt )
-            q(txt.to_s).gsub("\n",'\\newline ')
+            q(txt.to_s).gsub("\n",'\\linebreak ')
         end
 
         # return a reference to the instance's scope or 'binding'
